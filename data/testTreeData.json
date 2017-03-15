@@ -1,0 +1,78 @@
+[{
+    "name": "Environment",
+    "parent": "null",
+    "children": [
+      {
+        "name": "Host 1",
+        "parent": "Environment",
+        "children": [{
+            "name": "Service A",
+            "parent": "Host 1",
+            "PID": 1599,
+            "CMD": "start",
+            "User": "root",
+            "CPU": 0.5,
+            "Memory": 54660
+          }, {
+            "name": "App A",
+            "parent": "Host 1",
+            "PID": 7575,
+            "CMD": "run",
+            "User": "wheel",
+            "CPU": 1.5,
+            "Memory": 55235
+          },{
+            "name": "Service B",
+            "parent": "Host 1",
+            "PID": 1571,
+            "CMD": "u-disks daemon",
+            "User": "root",
+            "CPU": 0.5,
+            "Memory": 74760
+        }, {
+            "name": "App B",
+            "parent": "Host 1",
+            "PID": 3366,
+            "CMD": "run",
+            "User": "wheel",
+            "CPU": 3.5,
+            "Memory": 99345
+          }
+        ]},
+      {
+        "name": "Host 2",
+        "parent": "Environment"
+      },
+      {
+        "name": "Host 3",
+        "parent": "Environment"
+      },
+      {
+        "name": "Host 4",
+        "parent": "Environment"
+      },
+      {
+        "name": "Host 5",
+        "parent": "Environment"
+      },
+      {
+        "name": "Host 6",
+        "parent": "Environment"
+      },
+      {
+        "name": "Host 7",
+        "parent": "Environment"
+      },
+      {
+        "name": "Host 8",
+        "parent": "Environment"
+      },
+      {
+        "name": "Host 9",
+        "parent": "Environment"
+      },
+      {
+        "name": "Host 10",
+        "parent": "Environment"
+      }]
+}]
