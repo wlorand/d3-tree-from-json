@@ -1,0 +1,11 @@
+# OS X
+.DS_Store*
+
+# npm
+node_modules
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules
+

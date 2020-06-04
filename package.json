@@ -4,6 +4,7 @@
   "description": "Basic D3 Tree Chart using external JSON",
   "main": "app.js",
   "scripts": {
+    "start": "http-server -p 3369",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,5 +18,8 @@
     "JSON"
   ],
   "author": "B51: bill@milemarker3.org",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "http-server": "^0.12.3"
+  }
 }
