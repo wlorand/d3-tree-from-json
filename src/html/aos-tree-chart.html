@@ -47,15 +47,16 @@
 
     <script>
       // Next Code: Make the Tree More Interactive with Pan & Zoom
+      // Old style coding: all D3 code inside an IIFE
       (function () {
-        // 1- set svg canvas params - including the d3 margin convention
+        // 1- set svg canvas params - including the d3 margin convention (obj)
         var margin = { top: 20, right: 120, bottom: 20, left: 120 },
           width = 960 - margin.right - margin.left, // this is width of the data viz, not incl the axes
           height = 500 - margin.top - margin.bottom;
 
         // set misc vars
         var i = 0,
-          duration = 1500, // animate in (default time: 1.5sec)
+          duration = 2500, // animate in (default time: 1.5sec)
           root; // used in data, init here to avoid creating a var inside a fxn //undefined for now
 
         // 2- create the <svg> element and the enclosing <g> to place the data viz w/in the margin (boilerplate)
@@ -64,18 +65,19 @@
         var svg = d3
           .select('body')
           .append('svg')
-          .attr('width', width + margin.right + margin.left)
+          .attr('width', width + margin.right + margin.left) // svg width includes the margin!
           .attr('height', height + margin.top + margin.bottom)
           .append('g')
           .attr(
             'transform',
-            'translate(' + margin.left + ',' + margin.top + ')'
+            'translate(' + margin.left + ',' + margin.top + ')' // this g is for the data viz not axes
           )
           .append('g') // append a special <g> for the zoom
           .attr('class', 'zoom') // this child g is draggable
-          // -- know d3 zoom behavior is really panning (when it uses transform:translate)
+          // -- know d3 zoom behavior really means panning (when it uses transform:translate)
           // this is d3 call -- new code 77
           // it says zoom using scale according to props you get from the event object
+          // also notice d3 'behaviors' are called with .call() - axes also have this
           .call(
             d3.behavior.zoom().on('zoom', () => {
               svg.attr(
@@ -92,15 +94,16 @@
 
         // 3- do var setup for the tree layout and diagonal generator
         //    recall for pie chart, we used d3.layout.pie() and d3.svg.arc() for this
+        // recall a tree is a d3 layout, like a pie
         var tree = d3.layout.tree().size([height, width]);
 
         // 3.5- set up a diagonal generator to be called later with data (like setting up an axis)
-        var diagonal = d3.svg.diagonal().projection(function (d) {
+        var diagonal = d3.svg.diagonal().projection((d) => {
           return [d.y, d.x];
         }); // returns x,y coords for linkConnecter - tied to each data point
 
         // 4- load the external json data and set-it up for processing
-        // load the external data
+        // load the external data -- local -- ??? need to get more d3 examples of fetching data
 
         //A- testTreeData
         d3.json('../../data/testTreeData.json', (error, treeData) => {
@@ -129,18 +132,18 @@
         function renderTree(source) {
           console.log('source is: ', source);
 
-          // *5a- Define the .nodes and .links of your tree
+          // *5a- Define the .nodes and .links of your tree (these are a d3 tree sub-elements)
           var nodes = tree.nodes(root).reverse(),
             links = tree.links(nodes); // nodes get links passed to em! - makes sense
 
           // 5b- Normalize for fixed-depth.  // this compacts / squeezes the tree onto the canvas
-          nodes.forEach(function (d) {
+          nodes.forEach((d) => {
             // nodes as an array
             d.y = d.depth * 350;
           }); // assigns the d.y - using .depth property
 
           // 5c- Update the nodes === Declare the nodes, bind .data(), append <g> and <circle> for each node
-          var node = svg.selectAll('g.node').data(nodes, function (d) {
+          var node = svg.selectAll('g.node').data(nodes, (d) => {
             return d.id || (d.id = ++i); // if data element has a .id property, use it, otherwise increment the index and then use that
           });
 
@@ -150,17 +153,17 @@
             .enter()
             .append('g')
             .attr('class', 'node')
-            .attr('transform', function (d) {
+            .attr('transform', (d) => {
               return 'translate(' + source.y0 + ',' + source.x0 + ')';
             })
             .on('click', handleClick) // events right here in the middle of DOM elem generation!
-            .on('mouseover', function (d) {
+            .on('mouseover', (d) => {
               if (d.CPU) {
                 // hacky check for a certain property that only exists at this level of the data
                 div.transition().duration(500).style('opacity', 0.9); // on the fly opacity change to the div that is already there
                 div
                   .html(
-                    // write dynamic data props to the popup
+                    // write dynamic data props to the popup // TODO: refactor to have a template and pass it in
                     'PID: ' +
                       d.PID +
                       '<br/>' +
@@ -180,7 +183,7 @@
                   .style('top', d3.event.pageY + 10 + 'px');
               }
             })
-            .on('mouseout', function (d) {
+            .on('mouseout', (d) => {
               // hide the div with opacity 0
               if (d.CPU) {
                 div.transition().duration(500).style('opacity', 0);
@@ -191,24 +194,22 @@
           nodeEnter
             .append('circle')
             .attr('r', 1e-6) // que? radius
-            .style('fill', function (d) {
+            .style('fill', (d) => {
               return d._children ? 'steelblue' : '#fff';
             }); // fill circle blue if has kids
 
           // 5f- append text to each node (as sibling to circle)
           nodeEnter
             .append('text')
-            .attr('x', function (d) {
+            .attr('x', (d) => {
               return d.children || d._children ? -10 : 10;
             })
             .attr('dy', '.35em') // tweak text position
-            .attr('text-anchor', function (d) {
+            .attr('text-anchor', (d) => {
               // conditional text-anchor display
               return d.children || d._children ? 'end' : 'start';
             })
-            .text(function (d) {
-              return d.name;
-            }) // render the text itself
+            .text((d) => d.name) // render the text itself
             .style('fill-opacity', 1e-6);
 
           // 5g- Add the Tooltips to the DOM for each node
@@ -223,14 +224,14 @@
           var nodeUpdate = node
             .transition()
             .duration(duration)
-            .attr('transform', function (d) {
+            .attr('transform', (d) => {
               return 'translate(' + d.y + ',' + d.x + ')';
             });
 
           nodeUpdate
             .select('circle')
             .attr('r', 8)
-            .style('fill', function (d) {
+            .style('fill', (d) => {
               return d._children ? 'steelblue' : '#fff';
             });
 
@@ -244,7 +245,7 @@
             .exit()
             .transition()
             .duration(duration)
-            .attr('transform', function (d) {
+            .attr('transform', (d) => {
               return 'translate(' + source.y + ',' + source.x + ')';
             })
             .remove();
@@ -261,9 +262,7 @@
           // 5g.1: Update the links…
           var link = svg
             .selectAll('path.link') // we want <path class="link"> tags
-            .data(links, function (d) {
-              return d.target.id;
-            });
+            .data(links, (d) => d.target.id);
 
           // 5g.2: Enter any new links at the parent's previous position.
           //       - this uses .enter() pattern + .insert() over .append()
@@ -273,7 +272,7 @@
             .enter()
             .insert('path', 'g')
             .attr('class', 'link')
-            .attr('d', function (d) {
+            .attr('d', (d) => {
               // the key 'd' dynamic attribute - stands for Descriptor for the path
               var o = { x: source.x0, y: source.y0 };
               return diagonal({ source: o, target: o });
@@ -288,7 +287,7 @@
             .exit()
             .transition()
             .duration(duration)
-            .attr('d', function (d) {
+            .attr('d', (d) => {
               var o = { x: source.x, y: source.y };
               return diagonal({ source: o, target: o });
             })
@@ -296,7 +295,7 @@
 
           // 5h: Stash the old positions for transition.
           //     + notice the direct call to tree.nodes
-          nodes.forEach(function (d) {
+          nodes.forEach((d) => {
             d.x0 = d.x;
             d.y0 = d.y;
           });
@@ -314,7 +313,7 @@
           }
           renderTree(d); // re-render the tree with new values
         }
-      })(); // IIFE to be immed invoked // Better: Invoke when DOM Ready
+      })(); // IIFE to be immed invoked // Better: Invoke when DOM Ready (DOMContentLoaded)
     </script>
   </body>
 </html>
