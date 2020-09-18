@@ -4,11 +4,11 @@
   "description": "Basic D3 Tree Chart using external JSON",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "http-server -p 3369"
   },
   "repository": {
     "type": "git",
-    "url": "pending.git"
+    "url": "https://github.com/wlorand/d3-tree-from-json.git"
   },
   "keywords": [
     "D3",
@@ -16,6 +16,6 @@
     "Chart",
     "JSON"
   ],
-  "author": "B51: bill@milemarker3.org",
+  "author": "bill@milemarker3.org",
   "license": "ISC"
 }
